@@ -19,7 +19,7 @@ public class btnclick : MonoBehaviour
    public void add(){
 
        add_ = true ;
-       print(add_);
+       
     
    }
    public void mix(){

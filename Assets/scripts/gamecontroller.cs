@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 public class gamecontroller : MonoBehaviour
 {   
      public GameObject text1;
@@ -10,16 +11,28 @@ public class gamecontroller : MonoBehaviour
      public GameObject sign;
      public GameObject wrong;
      public GameObject right;
+     public GameObject Division;
 
+     public GameObject win;
+     public GameObject lose;
+
+  
+     public TMP_InputField input1;
+     public TMP_Text score;
+
+     public static int scorenum = 0;
      string num3 ;
      int num1 ;
      int num2 ;
+     int RandomNum;
 
      string input ;
      private void Start() {
         
-         num1 = Random.Range(1,100);
-         num2 = Random.Range(1,100);
+         
+         score.text = (PlayerPrefs.GetInt("highscore",0)).ToString();
+         scorenum = PlayerPrefs.GetInt("highscore",0);
+         Diffculty();
          
         if (btnclick.add_ == true)
         {
@@ -36,6 +49,7 @@ public class gamecontroller : MonoBehaviour
         }
         else if (btnclick.div_ == true)
         {
+            Division.SetActive(true);
             dodiv();
         }
         
@@ -46,35 +60,47 @@ public class gamecontroller : MonoBehaviour
 
      }
 
-
+      private void Diffculty(){
+            if (scorenum >= 30){
+                num1 = Random.Range(1,100);
+                num2 = Random.Range(1,100); 
+            }else if (scorenum >= 20 && scorenum < 30){
+                num1 = Random.Range(1,50);
+                num2 = Random.Range(1,50);}
+            else if (scorenum >= 10 && scorenum < 20){
+                num1 = Random.Range(1,20);
+                num2 = Random.Range(1,20);}
+            else if (scorenum >= 0 && scorenum < 10){
+                num1 = Random.Range(1,10);
+                num2 = Random.Range(1,10);}
+            
+      }
       public void ReadStringInput(string i){
 
           input = i ;
-          print(input);
+          }
 
-
-      }
-
-      public void gotonext(){
-   if (btnclick.add_ == true)
+     public void gotonext(){
+      
+       if (btnclick.add_ == true && Adsmanger.succad == true )
         {
              doadd();
             
         }
-        else if (btnclick.sub_ == true)
+        else if (btnclick.sub_ == true && Adsmanger.succad == true)
         {
             dosub();
         }
-        else if (btnclick.mul_ == true)
+        else if (btnclick.mul_ == true && Adsmanger.succad == true)
         {
             domul();
         }
-        else if (btnclick.div_ == true)
+        else if (btnclick.div_ == true && Adsmanger.succad == true)
         {
             dodiv();
         }
         
-        else if (btnclick.mix_ == true)
+        else if (btnclick.mix_ == true && Adsmanger.succad == true)
         {
             domix();
         }
@@ -91,14 +117,14 @@ public class gamecontroller : MonoBehaviour
             btnclick.div_ = false ;
             btnclick.mul_ = false ;
             btnclick.sub_ = false ;
+            btnclick.mix_ = false ;
 
 
    }
      public void doadd()
         {
           
-           num1 = Random.Range(1,100);
-           num2 = Random.Range(1,100);
+           Diffculty();
            
            
             Text text1_ = text1.GetComponent<Text>();
@@ -113,25 +139,33 @@ public class gamecontroller : MonoBehaviour
           
          
         }
-          public void checkans(){
+        public void checkans(){
                 if (num3==input)
                 {
                     right.SetActive(true);
+                    win.GetComponent<AudioSource>().Play();
+                    Adsmanger.succad = true;
+                    scorenum += 1;
+                    PlayerPrefs.SetInt("highscore",scorenum);
+                    score.text = scorenum.ToString();
+
                 }
                 else
                 {
                     wrong.SetActive(true);
-                    
+                     lose.GetComponent<AudioSource>().Play();
                 }
+
+                input1.text="";
             }
             public void cancelpopup(){
                  wrong.SetActive(false); 
                  right.SetActive(false);
+                 Division.SetActive(false);
             }
       public void dosub()
         {
-               num1 = Random.Range(1,100);
-              num2 = Random.Range(1,100);
+            Diffculty();
            Text sign_ = sign.GetComponent<Text>();
             sign_.text = "-";
            
@@ -147,8 +181,7 @@ public class gamecontroller : MonoBehaviour
         }
        public void domul()
         {
-               num1 = Random.Range(1,100);
-           num2 = Random.Range(1,100);
+           Diffculty();
            Text sign_ = sign.GetComponent<Text>();
             sign_.text = "×";
            
@@ -164,8 +197,7 @@ public class gamecontroller : MonoBehaviour
       public void dodiv()
         {
 
-               num1 = Random.Range(1,100);
-           num2 = Random.Range(1,100);
+           Diffculty();
              Text sign_ = sign.GetComponent<Text>();
             sign_.text = "÷";
            
@@ -180,20 +212,20 @@ public class gamecontroller : MonoBehaviour
         }
   public void domix(){
 
-num1 = Random.Range(1,5);
-if (num1==1)
+RandomNum = Random.Range(1,5);
+if (RandomNum==1)
 {
     doadd();
 }
-if (num1==2)
+if (RandomNum==2)
 {
     dosub();
 }
-if (num1==3)
+if (RandomNum==3)
 {
     domul();
 }
-if (num1==4)
+if (RandomNum==4)
 {
     dodiv();
 }
